@@ -1,3 +1,10 @@
+using System;
+using System.Linq;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using TestApiApp;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -16,11 +23,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
 app.MapGet("/weatherforecast", () =>
     {
         var forecast = Enumerable.Range(1, 5).Select(index =>
@@ -28,7 +30,7 @@ app.MapGet("/weatherforecast", () =>
                 (
                     DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
                     Random.Shared.Next(-20, 55),
-                    summaries[Random.Shared.Next(summaries.Length)]
+                    WeatherService.ProvideWeather()[Random.Shared.Next(WeatherService.WeatherLength)]
                 ))
             .ToArray();
         return forecast;
